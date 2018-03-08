@@ -11,5 +11,8 @@ export default {
   },
   editMenu: params=>{
     return API.PUT('/admin/api/menu',params)
+  },
+  menuIdsByRoleId: params=>{
+    return API.GET('/admin/api/menu/roleId',params)
   }
 }

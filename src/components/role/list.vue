@@ -45,13 +45,22 @@
         </el-pagination>
       </el-col>
 
-      <el-dialog title="编辑" :visible.sync ="editFormVisible" :close-on-click-modal="false">
+      <el-dialog title="编辑" :visible.sync="editFormVisible" :close-on-click-modal="false">
         <el-form :model="editForm" label-width="100px" :rules="editFormRules" ref="editForm">
           <el-form-item label="角色名" prop="roleName">
             <el-input v-model="editForm.roleName" auto-complete="off"></el-input>
           </el-form-item>
           <el-form-item label="备注" prop="remark">
-            <el-input type="textarea" v-model="editForm.remark" :rows="8"></el-input>
+            <el-input type="textarea" v-model="editForm.remark" :rows="2"></el-input>
+          </el-form-item>
+          <el-form-item label="权限">
+            <el-tree
+              :data="menus"
+              show-checkbox
+              node-key="id"
+              :props="treeProps"
+              ref="menuAddTree">
+            </el-tree>
           </el-form-item>
         </el-form>
         <div slot="footer" class="dialog-footer">
@@ -61,13 +70,22 @@
       </el-dialog>
 
       <!--新增界面-->
-      <el-dialog title="新增" :visible.sync ="addFormVisible" :close-on-click-modal="false">
+      <el-dialog title="新增" :visible.sync="addFormVisible" :close-on-click-modal="false">
         <el-form :model="addForm" label-width="80px" :rules="addFormRules" ref="addForm">
           <el-form-item label="角色名" prop="roleName">
-            <el-input v-model="addForm.name" auto-complete="off"></el-input>
+            <el-input v-model="addForm.roleName" auto-complete="off"></el-input>
           </el-form-item>
           <el-form-item label="备注" prop="remark">
-            <el-input type="textarea" v-model="addForm.description" :rows="8"></el-input>
+            <el-input type="textarea" v-model="addForm.remark" :rows="8"></el-input>
+          </el-form-item>
+          <el-form-item label="权限">
+            <el-tree
+              :data="menus"
+              show-checkbox
+              node-key="id"
+              :props="treeProps"
+              ref="menuAddTree">
+            </el-tree>
           </el-form-item>
         </el-form>
         <div slot="footer" class="dialog-footer">
@@ -82,9 +100,10 @@
 <script>
   import util from '../../common/util'
   import API from '../../api/api_role';
+  import MENU_API from '../../api/api_menu';
 
-  export default{
-    data(){
+  export default {
+    data() {
       return {
         filters: {
           name: ''
@@ -95,6 +114,12 @@
         limit: 10,
         loading: false,
         sels: [], //列表选中列
+        menus: [],
+        menuIds: [],//角色拥有的权限
+        treeProps: {
+          children: 'children',
+          label: 'text'
+        },
 
         //编辑相关数据
         editFormVisible: false,//编辑界面是否显示
@@ -136,7 +161,8 @@
           author: '',
           publishAt: '',
           description: ''
-        }
+        },
+
       }
     },
     methods: {
@@ -144,12 +170,12 @@
         this.page = val;
         this.search();
       },
-      handleSearch(){
+      handleSearch() {
         this.total = 0;
         this.page = 1;
         this.search();
       },
-      search(){
+      search() {
         let that = this;
         let params = {
           page: that.page,
@@ -202,6 +228,15 @@
       showEditDialog: function (index, row) {
         this.editFormVisible = true;
         this.editForm = Object.assign({}, row);
+        let that = this
+        MENU_API.menuIdsByRoleId({roleId: row.roleId}).then(function (res) {
+          that.setMenuIds(res)
+          that.$nextTick(function () {
+            MENU_API.menus('').then(function (result) {
+              that.menus = result
+            })
+          })
+        })
       },
       //编辑
       editSubmit: function () {
@@ -210,7 +245,7 @@
           if (valid) {
             this.loading = true;
             let para = Object.assign({}, this.editForm);
-            para.publishAt = (!para.publishAt || para.publishAt == '') ? '' : util.formatDate.format(new Date(para.publishAt), 'yyyy-MM-dd');
+            para.menuIds = that.getMenuIds()
             API.update(para.id, para).then(function (result) {
               that.loading = false;
               if (result && parseInt(result.code) === 0) {
@@ -234,12 +269,12 @@
       },
       showAddDialog: function () {
         this.addFormVisible = true;
-        this.addForm = {
-          name: '',
-          author: '',
-          publishAt: '',
-          description: ''
-        };
+        this.addForm = {};
+        let that = this
+        MENU_API.menus('').then(function (result) {
+          that.menus = result
+        })
+
       },
       //新增
       addSubmit: function () {
@@ -248,10 +283,10 @@
           if (valid) {
             that.loading = true;
             let para = Object.assign({}, this.addForm);
-            para.publishAt = (!para.publishAt || para.publishAt === '') ? '' : util.formatDate.format(new Date(para.publishAt), 'yyyy-MM-dd');
+            para.menuIds = that.getMenuIds()
             API.add(para).then(function (result) {
               that.loading = false;
-              if (result && parseInt(result.errcode) === 0) {
+              if (result && parseInt(result.code) === 0) {
                 that.$message.success({showClose: true, message: '新增成功', duration: 2000});
                 that.$refs['addForm'].resetFields();
                 that.addFormVisible = false;
@@ -296,16 +331,27 @@
         }).catch(() => {
 
         });
+      },
+      //获取选中、半选中节点
+      getMenuIds: function () {
+        return this.$refs.menuAddTree.getCheckedKeys().concat(this.$refs.menuAddTree.getHalfCheckedKeys())
+      },
+      /**
+       * (keys, leafOnly) 接收两个参数，1. 勾选节点的 key 的数组 2. boolean 类型的参数，若为 true 则仅设置叶子节点的选中状态，默认值为 false
+       */
+      setMenuIds: function (keys) {
+        this.$refs.menuAddTree.setCheckedKeys(keys, true)
       }
     },
     mounted() {
       this.handleSearch()
+
     }
   }
 </script>
 
 <!--<style>-->
-  <!--.demo-table-expand label {-->
-    <!--font-weight: bold;-->
-  <!--}-->
+<!--.demo-table-expand label {-->
+<!--font-weight: bold;-->
+<!--}-->
 <!--</style>-->
