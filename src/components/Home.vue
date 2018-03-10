@@ -39,7 +39,7 @@
         </div>
         <!--导航菜单-->
         <el-menu :default-active="defaultActiveIndex" router :collapse="collapsed" @select="handleSelect">
-          <template v-for="(item,index) in $router.options.routes" v-if="item.menuShow">
+          <template v-for="(item,index) in menus" v-if="item.menuShow">
             <el-submenu v-if="!item.leaf" :index="index+''">
               <template slot="title"><i :class="item.iconCls"></i><span slot="title">{{item.name}}</span></template>
               <el-menu-item v-for="term in item.children" :key="term.path" :index="term.path" v-if="term.menuShow"
@@ -92,7 +92,8 @@
       return {
         defaultActiveIndex: "0",
         nickname: "",
-        collapsed: false
+        collapsed: false,
+        menus:[]
       };
     },
     methods: {
@@ -117,6 +118,10 @@
             that.loading = true;
             //
             localStorage.removeItem("access-token");
+            localStorage.removeItem("menus")
+            API.logout('').then(function(res){
+              that.$message.error({showClose: true, message: res.msg, duration: 2000});
+            })
             that.$router.go("/login"); //用go刷新
             // API.logout().then(function (result) {
             //   that.loading = false;
@@ -138,7 +143,7 @@
       }
     },
     mounted() {
-      // let user = localStorage.getItem('access-user');
+       this.menus = JSON.parse(window.localStorage.getItem('menus'));
       // if (user) {
       //   user = JSON.parse(user);
       //   this.nickname = user.nickname || '';

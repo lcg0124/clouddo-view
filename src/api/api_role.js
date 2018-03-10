@@ -8,19 +8,19 @@ export default {
 
   //查询获取role列表(通过page分页)
   findList: params => {
-    return API.GET('/admin/api/role', params)
+    return API.GET('/api-admin/role', params)
   },
 
   //查询获取一条role信息
   findById: id => {
-    return API.GET('/admin/api/role/userId/'+id)
+    return API.GET('/api-admin/role/userId/'+id)
   },
 
   add: params => {
-    return API.POST(`/admin/api/role`, params)
+    return API.POST(`/api-admin/role`, params)
   },
   update: (id, params) => {
-    return API.PUT('/admin/api/role', params)
+    return API.PUT('/api-admin/role', params)
   },
 
   //单个删除role

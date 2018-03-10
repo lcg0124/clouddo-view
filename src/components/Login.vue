@@ -60,8 +60,12 @@ export default {
                   //   JSON.stringify(result.user)
                   // );
                   localStorage.setItem("access-token", result.token);
-                  //that.$store.commit("SET_ROUTERS", user.permissions);
-                  //that.$router.addRoutes(that.$store.getters.addRouters);
+                  console.log(result.router)
+                  localStorage.setItem("menus", JSON.stringify(result.router));
+                  console.log(JSON.parse(window.localStorage.getItem("menus")))
+                  // that.$store.commit("SET_ROUTERS", result.router);
+                  // that.$router.addRoutes(that.$store.getters.addRouters);
+                  //that.$router.addRoutes(result.router)
                   // that.$router.options.routes = that.$store.getters.routers;
                   that.$router.push({ path: "/" });
                 } else {

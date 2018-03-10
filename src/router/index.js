@@ -11,6 +11,8 @@ import UserProfile from '@/components/user/profile'
 
 import MenuList from '@/components/menu/list'
 
+
+
 // 懒加载方式，当路由被访问的时候才加载对应组件
 const Login = resolve => require(['@/components/Login'], resolve)
 
@@ -44,7 +46,7 @@ let router = new Router({
       leaf: true, // 只有一个节点
       iconCls: 'fa fa-user', // 图标样式class
       children: [
-        {path: '/user/list', component: UserList, name: '用户列表', menuShow: true}
+        {path: '/api-admin/user', component: UserList, name: '用户列表', menuShow: true}
       ]
     },
     {
@@ -55,7 +57,7 @@ let router = new Router({
       leaf: true, // 只有一个节点
       iconCls: 'fa fa-server', // 图标样式class
       children: [
-        {path: '/menu/list', component: MenuList, name: '菜单列表', menuShow: true}
+        {path: '/api-admin/menu', component: MenuList, name: '菜单列表', menuShow: true}
       ]
     },
     {
@@ -66,9 +68,11 @@ let router = new Router({
       leaf: true,
       iconCls: 'fa fa-group',
       children: [
-        {path: '/role/list', component: BookList, name: '角色管理', menuShow: true},
+        {path: '/api-admin/role', component: BookList, name: '角色管理', menuShow: true},
       ]
     },
+
+
     {
       path: '/',
       component: Home,
@@ -79,7 +83,9 @@ let router = new Router({
         {path: '/user/profile', component: UserProfile, name: '个人信息', menuShow: true},
         {path: '/user/changepwd', component: UserChangePwd, name: '修改密码', menuShow: true}
       ]
-    }
+    },
+
+
   ]
 })
 

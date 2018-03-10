@@ -9,64 +9,92 @@
     <el-col :span="24" class="warp-main" v-loading="loading" element-loading-text="拼命加载中">
       <!--工具条-->
       <el-col :span="24" class="toolbar" style="padding-bottom: 0px;">
-        <el-form :inline="true" >
+        <el-form :inline="true">
           <el-form-item>
-            <el-button type="primary" @click="showAddDialog(0,0)">添加</el-button>
+            <el-button type="primary" @click="showAddDialog(0)">添加</el-button>
           </el-form-item>
         </el-form>
       </el-col>
     </el-col>
-      <!--菜单表格-->
-      <el-col :span="24" class="warp-main" v-loading="loading" element-loading-text="拼命加载中">
-        <tree-table :data="menudata" :columns="columns" border highlight-current-row v-loading="loading"
-                    style="width: 100%;">
-          <el-table-column label="序号" prop="id"></el-table-column>
-          <el-table-column label="路径" prop="object.url"></el-table-column>
-          <el-table-column label="权限" prop="object.perms"></el-table-column>
-          <el-table-column label="操作" width="150">
-            <template slot-scope="scope">
-              <el-button size="mini" @click="showEditDialog(scope.$index,scope.row)">编辑</el-button>
-              <el-button size="mini" type="danger" @click="removeUser(scope.$index,scope.row)">删除</el-button>
-            </template>
-          </el-table-column>
-        </tree-table>
-        <!-- 添加界面 -->
-        <el-dialog title="编辑" :visible.sync="addFormVisible" :close-on-click-modal="false">
-          <el-form :model="addForm" label-width="80px" :rules="editFormRules" ref="addForm">
-            <el-form-item label="名称" prop="name">
-              <el-input v-model="addForm.name" auto-complete="off"></el-input>
-            </el-form-item>
-            <el-form-item label="路径" prop="url">
-              <el-input v-model="addForm.url" auto-complete="off"></el-input>
-            </el-form-item>
-            <el-form-item label="权限" prop="perms">
-              <el-input v-model="addForm.perms" auto-complete="off"></el-input>
-            </el-form-item>
-          </el-form>
-          <div slot="footer" class="dialog-footer">
-            <el-button @click.native="addFormVisible = false">取消</el-button>
-            <el-button type="primary" @click.native="addSubmit" :loading="addLoading">提交</el-button>
-          </div>
-        </el-dialog>
-        <!-- 编辑界面 -->
-        <el-dialog title="编辑" :visible.sync="editFormVisible" :close-on-click-modal="false">
-          <el-form :model="editForm" label-width="80px" :rules="editFormRules" ref="editForm">
-            <el-form-item label="名称" prop="name">
-              <el-input v-model="editForm.name" auto-complete="off"></el-input>
-            </el-form-item>
-            <el-form-item label="路径" prop="url">
-              <el-input v-model="editForm.url" auto-complete="off"></el-input>
-            </el-form-item>
-            <el-form-item label="权限" prop="perms">
-              <el-input v-model="editForm.perms" auto-complete="off"></el-input>
-            </el-form-item>
-          </el-form>
-          <div slot="footer" class="dialog-footer">
-            <el-button @click.native="editFormVisible = false">取消</el-button>
-            <el-button type="primary" @click.native="editSubmit" :loading="addLoading">提交</el-button>
-          </div>
-        </el-dialog>
-      </el-col>
+    <!--菜单表格-->
+    <el-col :span="24" class="warp-main" v-loading="loading" element-loading-text="拼命加载中">
+      <tree-table :data="menudata" :columns="columns" border highlight-current-row v-loading="loading"
+                  style="width: 100%;">
+        <el-table-column label="序号" prop="id"></el-table-column>
+        <el-table-column label="路径" prop="object.url"></el-table-column>
+        <el-table-column label="权限" prop="object.perms"></el-table-column>
+        <el-table-column label="操作" width="250">
+          <template slot-scope="scope">
+            <el-button size="mini" @click="showAddDialog(scope.row.id)">增加</el-button>
+            <el-button size="mini" @click="showEditDialog(scope.$index,scope.row)">编辑</el-button>
+            <el-button size="mini" type="danger" @click="remove(scope.$index,scope.row)">删除</el-button>
+          </template>
+        </el-table-column>
+      </tree-table>
+      <!-- 添加界面 -->
+      <el-dialog title="编辑" :visible.sync="addFormVisible" :close-on-click-modal="false">
+        <el-form :model="addForm" label-width="80px" :rules="editFormRules" ref="addForm">
+          <el-form-item label="名称" prop="name">
+            <el-input v-model="addForm.name" auto-complete="off"></el-input>
+          </el-form-item>
+          <el-form-item label="路径" prop="url">
+            <el-input v-model="addForm.url" auto-complete="off"></el-input>
+          </el-form-item>
+          <el-form-item label="权限" prop="perms">
+            <el-checkbox-group v-model="checkedPerms">
+              <el-checkbox v-for="perm in perms" :label="perm.key">{{perm.value}}</el-checkbox>
+            </el-checkbox-group>
+          </el-form-item>
+          <el-form-item label="类型" prop="type">
+            <el-radio-group v-model="addForm.type">
+              <el-radio :label="0">目录</el-radio>
+              <el-radio :label="1">菜单</el-radio>
+              <el-radio :label="2">操作</el-radio>
+            </el-radio-group>
+          </el-form-item>
+          <el-form-item label="图标" prop="icon">
+            <el-input v-model="addForm.icon" auto-complete="off"></el-input>
+          </el-form-item>
+        </el-form>
+        <div slot="footer" class="dialog-footer">
+          <el-button @click.native="addFormVisible = false">取消</el-button>
+          <el-button type="primary" @click.native="addSubmit" :loading="addLoading">提交</el-button>
+        </div>
+      </el-dialog>
+      <!-- 编辑界面 -->
+      <el-dialog title="编辑" :visible.sync="editFormVisible" :close-on-click-modal="false">
+        <el-form :model="editForm" label-width="80px" :rules="editFormRules" ref="editForm">
+          <el-form-item label="名称" prop="name">
+            <el-input v-model="editForm.name" auto-complete="off"></el-input>
+          </el-form-item>
+          <el-form-item label="路径" prop="url">
+            <el-input v-model="editForm.url" auto-complete="off"></el-input>
+          </el-form-item>
+          <el-form-item label="权限" prop="perms">
+            <el-checkbox-group v-model="checkedPerms">
+              <el-checkbox v-for="perm in perms" :label="perm.key">{{perm.value}}</el-checkbox>
+            </el-checkbox-group>
+          </el-form-item>
+          <el-form-item label="类型" prop="type">
+            <el-radio-group v-model="editForm.type">
+              <el-radio :label="0">目录</el-radio>
+              <el-radio :label="1">菜单</el-radio>
+              <el-radio :label="2">操作</el-radio>
+            </el-radio-group>
+          </el-form-item>
+          <el-form-item label="图标" prop="icon">
+            <el-input v-model="editForm.icon" auto-complete="off"></el-input>
+          </el-form-item>
+          <el-form-item label="排序" prop="icon">
+            <el-input v-model="editForm.orderNum" auto-complete="off"></el-input>
+          </el-form-item>
+        </el-form>
+        <div slot="footer" class="dialog-footer">
+          <el-button @click.native="editFormVisible = false">取消</el-button>
+          <el-button type="primary" @click.native="editSubmit" :loading="addLoading">提交</el-button>
+        </div>
+      </el-dialog>
+    </el-col>
   </el-row>
 </template>
 
@@ -84,6 +112,8 @@
       return {
         loading: false,
         addLoading: false,
+        perms:[{key:'get',value:'查询'},{key:'post',value:'增加'},{key:'put',value:'修改'},{key:'delete',value:'删除'}],
+        checkedPerms:[],
         columns: [
           {
             text: '名称',
@@ -95,8 +125,8 @@
         editFormVisible: false,
         editForm: {},
         editFormRules: {},
-        addFormVisible:false,
-        addForm:{}
+        addFormVisible: false,
+        addForm: {}
       }
     },
     methods: {
@@ -108,12 +138,17 @@
           }
         )
       },
-      showAddDialog: function(index,row){
+      showAddDialog: function (parentId) {
+        this.addForm.parentId = parentId
         this.addFormVisible = true
       },
       showEditDialog: function (index, row) {
         this.editFormVisible = true
         this.editForm = Object.assign({}, row.object)
+        this.checkedPerms = JSON.parse(this.editForm.perms)
+        if(true==this.checkedPerms){
+          this.checkedPerms =[]
+        }
       },
       editSubmit: function () {
         let that = this;
@@ -121,6 +156,7 @@
           if (valid) {
             that.loading = true;
             let params = Object.assign({}, that.editForm);
+            params.perms = JSON.stringify(that.checkedPerms)
             API.editMenu(params).then(function (result) {
               if (0 === result.code) {
                 that.loading = false;
@@ -151,10 +187,9 @@
           if (valid) {
             that.loading = true;
             let para = Object.assign({}, this.addForm);
-            para.publishAt = (!para.publishAt || para.publishAt === '') ? '' : util.formatDate.format(new Date(para.publishAt), 'yyyy-MM-dd');
             API.add(para).then(function (result) {
               that.loading = false;
-              if (result && parseInt(result.errcode) === 0) {
+              if (result && parseInt(result.code) === 0) {
                 that.$message.success({showClose: true, message: '新增成功', duration: 2000});
                 that.$refs['addForm'].resetFields();
                 that.addFormVisible = false;
@@ -174,6 +209,46 @@
           }
         });
       },
+      remove: function (index, row) {
+        let that = this;
+        this.$confirm("确认删除该记录吗?", "提示", {type: "warning"})
+          .then(() => {
+            that.loading = true;
+            API.remove({id: row.id})
+              .then(
+                function (result) {
+                  that.loading = false;
+                  if (result && parseInt(result.code) === 0) {
+                    that.$message.success({
+                      showClose: true,
+                      message: "删除成功",
+                      duration: 1500
+                    });
+                    that.search();
+                  }
+                },
+                function (err) {
+                  that.loading = false;
+                  that.$message.error({
+                    showClose: true,
+                    message: err.toString(),
+                    duration: 2000
+                  });
+                }
+              )
+              .catch(function (error) {
+                that.loading = false;
+                console.log(error);
+                that.$message.error({
+                  showClose: true,
+                  message: "请求出现异常",
+                  duration: 2000
+                });
+              });
+          })
+          .catch(() => {
+          });
+      }
     },
     mounted() {
       this.search();

@@ -198,9 +198,9 @@
           .then(
             function (result) {
               that.loading = false;
-              if (result && result.rows) {
-                that.total = result.total;
-                that.users = result.rows;
+              if (result && result.page.rows) {
+                that.total = result.page.total;
+                that.users = result.page.rows;
               }
             },
             function (err) {
