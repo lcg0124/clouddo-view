@@ -226,7 +226,7 @@
 
     aside {
       min-width: 50px;
-      background: #333744;
+      background: #2f4050;
       &::-webkit-scrollbar {
         display: none;
       }
@@ -242,7 +242,7 @@
         height: -webkit-calc(100% - 80px);
         height: calc(100% - 80px);
         border-radius: 0px;
-        background-color: #333744;
+        background-color: #2f4050;
         border-right: 0px;
       }
 
@@ -265,7 +265,8 @@
       .el-menu-item:hover,
       .el-submenu .el-menu-item:hover,
       .el-submenu__title:hover {
-        background-color: #606266;
+        background-color: #293846;
+        color: #fff;
       }
     }
 

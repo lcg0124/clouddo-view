@@ -46,7 +46,7 @@ let router = new Router({
       leaf: true, // 只有一个节点
       iconCls: 'fa fa-user', // 图标样式class
       children: [
-        {path: '/api-admin/user', component: UserList, name: '用户列表', menuShow: true}
+        {path: '/admin/user', component: UserList, name: '用户列表', menuShow: true}
       ]
     },
     {
@@ -57,7 +57,7 @@ let router = new Router({
       leaf: true, // 只有一个节点
       iconCls: 'fa fa-server', // 图标样式class
       children: [
-        {path: '/api-admin/menu', component: MenuList, name: '菜单列表', menuShow: true}
+        {path: '/admin/menu', component: MenuList, name: '菜单列表', menuShow: true}
       ]
     },
     {
@@ -68,7 +68,7 @@ let router = new Router({
       leaf: true,
       iconCls: 'fa fa-group',
       children: [
-        {path: '/api-admin/role', component: BookList, name: '角色管理', menuShow: true},
+        {path: '/admin/role', component: BookList, name: '角色管理', menuShow: true},
       ]
     },
 

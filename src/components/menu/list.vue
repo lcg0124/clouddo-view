@@ -20,8 +20,16 @@
     <el-col :span="24" class="warp-main" v-loading="loading" element-loading-text="拼命加载中">
       <tree-table :data="menudata" :columns="columns" border highlight-current-row v-loading="loading"
                   style="width: 100%;">
-        <el-table-column label="序号" prop="id"></el-table-column>
+        <el-table-column label="类型" prop="object.type">
+          <template slot-scope="scope">
+            <el-tag v-if="scope.row.object.type === null"></el-tag>
+            <el-tag v-if="scope.row.object.type === 0">目录</el-tag>
+            <el-tag v-if="scope.row.object.type === 1">菜单</el-tag>
+            <el-tag v-if="scope.row.object.type === 2">操作</el-tag>
+          </template>
+        </el-table-column>
         <el-table-column label="路径" prop="object.url"></el-table-column>
+        <el-table-column label="路径类型" prop="object.urlType"></el-table-column>
         <el-table-column label="权限" prop="object.perms"></el-table-column>
         <el-table-column label="操作" width="250">
           <template slot-scope="scope">
@@ -40,10 +48,13 @@
           <el-form-item label="路径" prop="url">
             <el-input v-model="addForm.url" auto-complete="off"></el-input>
           </el-form-item>
+          <!--<el-form-item label="api类型" prop="perms">-->
+            <!--<el-checkbox-group v-model="addForm.perms">-->
+              <!--<el-checkbox v-for="item in permsItems" :label="item.key">{{item.value}}</el-checkbox>-->
+            <!--</el-checkbox-group>-->
+          <!--</el-form-item>-->
           <el-form-item label="权限" prop="perms">
-            <el-checkbox-group v-model="checkedPerms">
-              <el-checkbox v-for="perm in perms" :label="perm.key">{{perm.value}}</el-checkbox>
-            </el-checkbox-group>
+            <el-input v-model="addForm.perms" auto-complete="off"></el-input>
           </el-form-item>
           <el-form-item label="类型" prop="type">
             <el-radio-group v-model="addForm.type">
@@ -70,18 +81,21 @@
           <el-form-item label="路径" prop="url">
             <el-input v-model="editForm.url" auto-complete="off"></el-input>
           </el-form-item>
-          <el-form-item label="权限" prop="perms">
-            <el-checkbox-group v-model="checkedPerms">
-              <el-checkbox v-for="perm in perms" :label="perm.key">{{perm.value}}</el-checkbox>
-            </el-checkbox-group>
-          </el-form-item>
           <el-form-item label="类型" prop="type">
             <el-radio-group v-model="editForm.type">
               <el-radio :label="0">目录</el-radio>
               <el-radio :label="1">菜单</el-radio>
-              <el-radio :label="2">操作</el-radio>
+              <el-radio :label="2">api</el-radio>
             </el-radio-group>
           </el-form-item>
+          <el-form-item label="路径" prop="url">
+            <el-input v-model="editForm.perms" auto-complete="off"></el-input>
+          </el-form-item>
+          <!--<el-form-item label="api类型" prop="perms">-->
+            <!--<el-checkbox-group v-model="editForm.perms">-->
+              <!--<el-checkbox v-for="item in permsItems" :label="item.key" :key="item.value">{{item.key}}</el-checkbox>-->
+            <!--</el-checkbox-group>-->
+          <!--</el-form-item>-->
           <el-form-item label="图标" prop="icon">
             <el-input v-model="editForm.icon" auto-complete="off"></el-input>
           </el-form-item>
@@ -112,8 +126,12 @@
       return {
         loading: false,
         addLoading: false,
-        perms:[{key:'get',value:'查询'},{key:'post',value:'增加'},{key:'put',value:'修改'},{key:'delete',value:'删除'}],
-        checkedPerms:[],
+        permsItems: [
+          {key: "get", value: "get"},
+          {key: "post", value: "post"},
+          {key: "put", value: "put"},
+          {key: "delete", value: "delete"}
+        ],
         columns: [
           {
             text: '名称',
@@ -145,10 +163,10 @@
       showEditDialog: function (index, row) {
         this.editFormVisible = true
         this.editForm = Object.assign({}, row.object)
-        this.checkedPerms = JSON.parse(this.editForm.perms)
-        if(true==this.checkedPerms){
-          this.checkedPerms =[]
-        }
+        // this.editForm.perms = JSON.parse(this.editForm.perms)
+        // if(!Array.isArray(this.editForm.perms)){
+        //   this.editForm.perms = new Array()
+        // }
       },
       editSubmit: function () {
         let that = this;
@@ -156,7 +174,7 @@
           if (valid) {
             that.loading = true;
             let params = Object.assign({}, that.editForm);
-            params.perms = JSON.stringify(that.checkedPerms)
+            // params.perms = JSON.stringify(params.perms)
             API.editMenu(params).then(function (result) {
               if (0 === result.code) {
                 that.loading = false;

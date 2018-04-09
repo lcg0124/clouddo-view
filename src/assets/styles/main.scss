@@ -17,20 +17,22 @@ a {
 
 //home.vue
 .el-menu-item, .el-submenu__title {
-  color: #fff;
+  color: #a7b1c2;
 }
 
 .el-menu .el-menu-item, .el-submenu .el-submenu__title {
   height: 46px;
   line-height: 46px;
+  font-weight: 650;
 }
 
 .el-menu-item:hover, .el-submenu .el-menu-item:hover, .el-submenu__title:hover {
-  background-color: #7ed2df;
+  background-color: #293846;
+  color: #fff;
 }
 
 .el-submenu .el-menu-item {
-  background-color: #333744
+  background-color: #2f4050
 }
 
 .el-submenu .el-menu-item:hover {
@@ -39,7 +41,7 @@ a {
 
 .el-submenu .el-menu-item.is-active, .el-menu-item.is-active,
 .el-submenu .el-menu-item.is-active:hover, .el-menu-item.is-active:hover {
-  background-color: #606266;
+  //background-color: #293846;
   color: #fff;
 }
 
