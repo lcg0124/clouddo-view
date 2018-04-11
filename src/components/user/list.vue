@@ -19,7 +19,7 @@
             <el-button type="primary" @click="handleSearch">查询</el-button>
           </el-form-item>
           <el-form-item>
-            <el-button type="primary" @click="showAddDialog">添加</el-button>
+            <el-button v-has="'admin:user:add'" type="primary" @click="showAddDialog">添加</el-button>
           </el-form-item>
         </el-form>
       </el-col>

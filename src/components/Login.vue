@@ -53,7 +53,6 @@ export default {
             .then(
               function(result) {
                 that.loading = false;
-                console.log(result.token);
                 if (result && result.code === 0) {
                   // localStorage.setItem(
                   //   "access-user",
@@ -62,7 +61,7 @@ export default {
                   localStorage.setItem("access-token", result.token);
                   console.log(result.router)
                   localStorage.setItem("menus", JSON.stringify(result.router));
-                  console.log(JSON.parse(window.localStorage.getItem("menus")))
+                  localStorage.setItem("perms",JSON.stringify(result.perms))
                   // that.$store.commit("SET_ROUTERS", result.router);
                   // that.$router.addRoutes(that.$store.getters.addRouters);
                   //that.$router.addRoutes(result.router)
@@ -71,7 +70,7 @@ export default {
                 } else {
                   that.$message.error({
                     showClose: true,
-                    message: result.errmsg || "登录失败",
+                    message: result.msg || "登录失败",
                     duration: 2000
                   });
                 }

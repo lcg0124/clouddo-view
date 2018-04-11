@@ -78,7 +78,7 @@
                 bus.$emit('setNickName', that.form.nickname);
                 that.$message.success({showClose: true, message: '修改成功', duration: 2000});
               } else {
-                that.$message.error({showClose: true, message: result.errmsg, duration: 2000});
+                that.$message.error({showClose: true, message: result.msg, duration: 2000});
               }
             }, function (err) {
               that.loading = false;
