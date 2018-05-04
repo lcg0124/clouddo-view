@@ -9,7 +9,7 @@
         <a href="/"><img src="../assets/logotxt.png"></a>
       </div>
       <div class="topbar-title">
-        <span style="font-size: 18px;color: #fff;">后台管理系统</span>
+        <span style="font-size: 18px;color: #fff;"></span>
       </div>
       <div class="topbar-account topbar-btn">
         <el-dropdown trigger="click">
@@ -93,7 +93,7 @@
         defaultActiveIndex: "0",
         nickname: "",
         collapsed: false,
-        menus:[]
+        menus: []
       };
     },
     methods: {
@@ -119,23 +119,10 @@
             //
             localStorage.removeItem("access-token");
             localStorage.removeItem("menus")
-            API.logout('').then(function(res){
+            API.logout('').then(function (res) {
               that.$message.error({showClose: true, message: res.msg, duration: 2000});
             })
             that.$router.go("/login"); //用go刷新
-            // API.logout().then(function (result) {
-            //   that.loading = false;
-            //   localStorage.removeItem('access-user');
-            //   localStorage.removeItem('access-token')
-            //   that.$router.go('/login'); //用go刷新
-            // }, function (err) {
-            //   that.loading = false;
-            //   that.$message.error({showClose: true, message: err.toString(), duration: 2000});
-            // }).catch(function (error) {
-            //   that.loading = false;
-            //   console.log(error);
-            //   that.$message.error({showClose: true, message: '请求出现异常', duration: 2000});
-            // });
           })
           .catch(() => {
 
@@ -143,7 +130,7 @@
       }
     },
     mounted() {
-       this.menus = JSON.parse(window.localStorage.getItem('menus'));
+      this.menus = JSON.parse(window.localStorage.getItem('menus'));
       // if (user) {
       //   user = JSON.parse(user);
       //   this.nickname = user.nickname || '';

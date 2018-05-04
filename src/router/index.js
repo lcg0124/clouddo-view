@@ -2,6 +2,7 @@ import Vue from 'vue'
 import Router from 'vue-router'
 import Home from '@/components/Home'
 import Dashboard from '@/components/Dashboard'
+import Index from '@/components/welcome/index.vue'
 
 import BookList from '@/components/role/list'
 
@@ -12,15 +13,19 @@ import UserProfile from '@/components/user/profile'
 import MenuList from '@/components/menu/list'
 
 
-
 // 懒加载方式，当路由被访问的时候才加载对应组件
 const Login = resolve => require(['@/components/Login'], resolve)
 
 Vue.use(Router)
 
 let router = new Router({
-// mode: 'history',
+  mode: 'history',
   routes: [
+    {
+      path: '/index',
+      name: '首页',
+      component: Index
+    },
     {
       path: '/login',
       name: '登录',
@@ -94,6 +99,8 @@ router.beforeEach((to, from, next) => {
   if (to.path.startsWith('/login')) {
     window.localStorage.removeItem('access-token')
     //window.localStorage.removeItem('access-user')
+    next()
+  } else if (to.path.startsWith('/index')) {
     next()
   } else {
     //let user = JSON.parse(window.localStorage.getItem('access-token'))
