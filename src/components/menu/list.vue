@@ -9,9 +9,9 @@
     <el-col :span="24" class="warp-main" v-loading="loading" element-loading-text="拼命加载中">
       <!--工具条-->
       <el-col :span="24" class="toolbar" style="padding-bottom: 0px;">
-        <el-form :inline="true">
+        <el-form :inline="true" size="small">
           <el-form-item>
-            <el-button type="primary" @click="showAddDialog(0)">添加</el-button>
+            <el-button type="primary" @click="showAddDialog(0,-1)">添加</el-button>
           </el-form-item>
         </el-form>
       </el-col>
@@ -33,7 +33,7 @@
         <el-table-column label="权限" prop="object.perms"></el-table-column>
         <el-table-column label="操作" width="250">
           <template slot-scope="scope">
-            <el-button size="mini" @click="showAddDialog(scope.row.id)">增加</el-button>
+            <el-button size="mini" @click="showAddDialog(scope.row.id,scope.row.object.type)">增加</el-button>
             <el-button size="mini" @click="showEditDialog(scope.$index,scope.row)">编辑</el-button>
             <el-button size="mini" type="danger" @click="remove(scope.$index,scope.row)">删除</el-button>
           </template>
@@ -42,20 +42,6 @@
       <!-- 添加界面 -->
       <el-dialog title="编辑" :visible.sync="addFormVisible" :close-on-click-modal="false">
         <el-form :model="addForm" label-width="80px" :rules="editFormRules" ref="addForm">
-          <el-form-item label="名称" prop="name">
-            <el-input v-model="addForm.name" auto-complete="off"></el-input>
-          </el-form-item>
-          <el-form-item label="路径" prop="url">
-            <el-input v-model="addForm.url" auto-complete="off"></el-input>
-          </el-form-item>
-          <!--<el-form-item label="api类型" prop="perms">-->
-            <!--<el-checkbox-group v-model="addForm.perms">-->
-              <!--<el-checkbox v-for="item in permsItems" :label="item.key">{{item.value}}</el-checkbox>-->
-            <!--</el-checkbox-group>-->
-          <!--</el-form-item>-->
-          <el-form-item label="权限" prop="perms">
-            <el-input v-model="addForm.perms" auto-complete="off"></el-input>
-          </el-form-item>
           <el-form-item label="类型" prop="type">
             <el-radio-group v-model="addForm.type">
               <el-radio :label="0">目录</el-radio>
@@ -63,6 +49,21 @@
               <el-radio :label="2">操作</el-radio>
             </el-radio-group>
           </el-form-item>
+          <el-form-item label="名称" prop="name">
+            <el-input v-model="addForm.name" auto-complete="off"></el-input>
+          </el-form-item>
+          <el-form-item label="路径" prop="url">
+            <el-input v-model="addForm.url" auto-complete="off"></el-input>
+          </el-form-item>
+          <!--<el-form-item label="api类型" prop="perms">-->
+          <!--<el-checkbox-group v-model="addForm.perms">-->
+          <!--<el-checkbox v-for="item in permsItems" :label="item.key">{{item.value}}</el-checkbox>-->
+          <!--</el-checkbox-group>-->
+          <!--</el-form-item>-->
+          <el-form-item label="权限" prop="perms">
+            <el-input v-model="addForm.perms" auto-complete="off"></el-input>
+          </el-form-item>
+
           <el-form-item label="图标" prop="icon">
             <el-input v-model="addForm.icon" auto-complete="off"></el-input>
           </el-form-item>
@@ -75,12 +76,6 @@
       <!-- 编辑界面 -->
       <el-dialog title="编辑" :visible.sync="editFormVisible" :close-on-click-modal="false">
         <el-form :model="editForm" label-width="80px" :rules="editFormRules" ref="editForm">
-          <el-form-item label="名称" prop="name">
-            <el-input v-model="editForm.name" auto-complete="off"></el-input>
-          </el-form-item>
-          <el-form-item label="路径" prop="url">
-            <el-input v-model="editForm.url" auto-complete="off"></el-input>
-          </el-form-item>
           <el-form-item label="类型" prop="type">
             <el-radio-group v-model="editForm.type">
               <el-radio :label="0">目录</el-radio>
@@ -88,13 +83,20 @@
               <el-radio :label="2">api</el-radio>
             </el-radio-group>
           </el-form-item>
+          <el-form-item label="名称" prop="name">
+            <el-input v-model="editForm.name" auto-complete="off"></el-input>
+          </el-form-item>
+          <el-form-item label="路径" prop="url">
+            <el-input v-model="editForm.url" auto-complete="off"></el-input>
+          </el-form-item>
+
           <el-form-item label="路径" prop="url">
             <el-input v-model="editForm.perms" auto-complete="off"></el-input>
           </el-form-item>
           <!--<el-form-item label="api类型" prop="perms">-->
-            <!--<el-checkbox-group v-model="editForm.perms">-->
-              <!--<el-checkbox v-for="item in permsItems" :label="item.key" :key="item.value">{{item.key}}</el-checkbox>-->
-            <!--</el-checkbox-group>-->
+          <!--<el-checkbox-group v-model="editForm.perms">-->
+          <!--<el-checkbox v-for="item in permsItems" :label="item.key" :key="item.value">{{item.key}}</el-checkbox>-->
+          <!--</el-checkbox-group>-->
           <!--</el-form-item>-->
           <el-form-item label="图标" prop="icon">
             <el-input v-model="editForm.icon" auto-complete="off"></el-input>
@@ -156,7 +158,12 @@
           }
         )
       },
-      showAddDialog: function (parentId) {
+      showAddDialog: function (parentId, parentType) {
+        if (parentType != 2) {
+          this.addForm.type = parentType + 1
+        } else {
+          this.addForm.type = parentType
+        }
         this.addForm.parentId = parentId
         this.addFormVisible = true
       },

@@ -1,5 +1,5 @@
 <template>
-  <el-container id="main" style="background-image:url('http://bootdo01-1254153620.file.myqcloud.com/141120113244-1.jpg');">
+  <el-container id="main" >
     <el-header id="nav">
       <el-menu
         :default-active="activeIndex"

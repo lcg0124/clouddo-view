@@ -12,6 +12,10 @@ import UserProfile from '@/components/user/profile'
 
 import MenuList from '@/components/menu/list'
 
+import FileList from '../components/file/List.vue'
+
+import LogList from '../components/log/List'
+
 
 // 懒加载方式，当路由被访问的时候才加载对应组件
 const Login = resolve => require(['@/components/Login'], resolve)
@@ -77,7 +81,28 @@ let router = new Router({
       ]
     },
 
-
+    {
+      path: '/',
+      component: Home,
+      name: '文件管理',
+      menuShow: true,
+      leaf: true,
+      iconCls: 'fa fa-group',
+      children: [
+        {path: '/cms/file', component: FileList, name: '文件管理', menuShow: true},
+      ]
+    },
+    {
+      path: '/',
+      component: Home,
+      name: '日志管理',
+      menuShow: true,
+      leaf: true,
+      iconCls: 'fa fa-group',
+      children: [
+        {path: '/base/log', component: LogList, name: '日志管理', menuShow: true},
+      ]
+    },
     {
       path: '/',
       component: Home,
